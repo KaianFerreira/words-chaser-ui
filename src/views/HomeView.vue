@@ -7,14 +7,14 @@
           :value="letter"
           maxlength="1"
           @input="changeValue"
+          @keydown.backspace="remove(i)"
+          @keydown.enter="search"
           :ref="`letter${i}`"
           :id="`letter-${i}`"
-          @keydown.backspace="remove(i)"
         >
       </div>
       <div class="letter add-letter" @click="letters.push('')">+</div>
     </div>
-    <button @click="search">Pesquisar</button>
     <div class="results">
       <div class="letters-length">
         <div class="letter" v-for="(letterLen, i) in Object.keys(filteredResults)" :key="`letterLen-${i}`">
@@ -78,6 +78,9 @@
       }
     },
     methods: {
+      async search() {
+        this.result = await getFiltered(this.formattedLetters)
+      },
       remove(index) {
         if (index === 0) return
         const arrLength = this.letters.length - 1
@@ -115,7 +118,6 @@
           const newRef = this.$refs[nextInput]
           newRef[0].focus()
         })
-        this.result = await getFiltered(this.formattedLetters)
       },
       changeFocus(current) {
         this.focus = current+1
